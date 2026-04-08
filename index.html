@@ -28,7 +28,7 @@
         <div class="max-w-6xl mx-auto flex justify-between items-center">
             <div>
                 <h1 class="font-black tracking-tighter text-2xl uppercase text-yellow-400 leading-none">PLTS<span class="text-white">EXPERT</span></h1>
-                <p class="text-[9px] text-slate-400 font-bold tracking-[0.2em] mt-1 uppercase italic">Safety & Marketplace Optimized</p>
+                <p class="text-[9px] text-slate-400 font-bold tracking-[0.2em] mt-1 uppercase italic">Smart Logic & Shopping Guide</p>
             </div>
         </div>
     </nav>
@@ -37,8 +37,8 @@
         <div class="lg:col-span-5 space-y-6">
             <div class="bg-white p-6 md:p-8 rounded-[2.5rem] shadow-sm border border-slate-200">
                 <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-xs font-black uppercase tracking-widest text-slate-400">📋 Daftar Perangkat</h2>
-                    <button onclick="addRow()" class="bg-yellow-400 text-slate-900 px-3 py-1 rounded-full text-[10px] font-black hover:bg-yellow-500">+ ALAT</button>
+                    <h2 class="text-xs font-black uppercase tracking-widest text-slate-400 font-bold">📋 Daftar Perangkat</h2>
+                    <button onclick="addRow()" class="bg-yellow-400 text-slate-900 px-3 py-1 rounded-full text-[10px] font-black hover:bg-yellow-500 transition-all">+ ALAT</button>
                 </div>
                 <div class="space-y-3 mb-6" id="loadContainer">
                     <div class="grid grid-cols-12 gap-2 load-row items-center border-b pb-3 border-slate-50">
@@ -59,7 +59,7 @@
                             </select>
                         </div>
                         <div class="space-y-1">
-                            <label class="text-slate-400 uppercase">Voltase Aki</label>
+                            <label class="text-slate-400 uppercase">Voltase Sistem</label>
                             <select id="voltInput" class="w-full p-4 bg-slate-50 rounded-2xl border border-slate-200 outline-none text-slate-800">
                                 <option value="12">12V</option>
                                 <option value="24">24V</option>
@@ -67,9 +67,16 @@
                             </select>
                         </div>
                     </div>
+                    <div class="space-y-1">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase text-center block font-bold">Tipe Penyimpanan</label>
+                        <select id="batteryType" class="w-full p-4 bg-blue-50 text-blue-700 rounded-2xl font-bold text-xs border border-blue-100 outline-none">
+                            <option value="0.8">LiFePO4 (DoD 80%)</option>
+                            <option value="0.5">Aki GEL/VRLA (DoD 50%)</option>
+                        </select>
+                    </div>
                     <div class="bg-amber-50 p-4 rounded-2xl border border-amber-100">
                         <label class="block text-[10px] font-bold text-amber-700 uppercase mb-1">PV Custom (Optional WP)</label>
-                        <input type="number" id="customPV" placeholder="Biarkan Kosong Untuk Auto" class="w-full p-3 bg-white border border-amber-200 rounded-xl font-bold text-sm outline-none">
+                        <input type="number" id="customPV" placeholder="WP" class="w-full p-3 bg-white border border-amber-200 rounded-xl font-bold text-sm outline-none">
                     </div>
                     <button onclick="processSystem()" class="w-full bg-yellow-400 text-slate-900 font-black py-5 rounded-2xl hover:bg-slate-900 transition-all uppercase tracking-tighter shadow-xl">Analisa Sistem ⚡</button>
                 </div>
@@ -97,14 +104,14 @@
                         <h3 id="resWh" class="text-3xl font-black text-yellow-400">0 Wh</h3>
                     </div>
                     <div class="bg-white p-6 rounded-[2rem] border border-slate-200 shadow-sm">
-                        <p class="text-slate-400 text-[10px] font-bold uppercase mb-1">Kapasitas Aki</p>
+                        <p class="text-slate-400 text-[10px] font-bold uppercase mb-1" id="storageLabel">Kapasitas</p>
                         <h3 id="resAh" class="text-3xl font-black text-blue-600">0 Ah</h3>
                     </div>
                 </div>
 
                 <div id="inverterInfo" class="bg-blue-600 text-white p-5 rounded-[2.5rem] shadow-lg hidden">
-                    <p class="text-[10px] font-bold uppercase opacity-80 mb-1">Rekomendasi Inverter</p>
-                    <h3 id="resInverter" class="text-xl font-black italic">0W Continuous</h3>
+                    <p class="text-[10px] font-bold uppercase opacity-80 mb-1">Inverter Recommended</p>
+                    <h3 id="resInverter" class="text-xl font-black italic">0W</h3>
                 </div>
 
                 <div class="bg-white p-8 rounded-[2.5rem] border border-slate-200 text-center shadow-sm overflow-x-auto">
@@ -126,7 +133,7 @@
                 </div>
             </div>
             <div id="placeholder" class="h-64 border-4 border-dashed border-slate-200 rounded-[3rem] flex items-center justify-center opacity-40 font-black text-slate-300 italic text-center p-4">
-                PENGHITUNG PLTS CERDAS (AUTO-DETEKSI BEBAN BERAT)
+                PENGHITUNG PLTS CERDAS (DENGAN REKOMENDASI PASAR)
             </div>
         </div>
     </div>
@@ -164,49 +171,53 @@
                 const h = parseFloat(hours[i].value) || 0;
                 const name = names[i].value.toLowerCase();
                 totalWhBase += vW * h;
-                // Smart Detection Kulkas/AC/Setrika/Pompa
                 if (name.includes("kulkas") || name.includes("ac") || name.includes("setrika") || name.includes("pompa")) {
                     hasHeavyLoad = true; heavyName = names[i].value;
-                    instantWatt += vW * 3; // Buffer kejut
+                    instantWatt += vW * 3;
                 } else { instantWatt += vW; }
             });
 
-            if (totalWhBase <= 0) return alert("Isi alat!");
+            if (totalWhBase <= 0) return alert("Harap isi alat!");
 
             const mode = document.getElementById('modeInput').value;
             const volt = parseFloat(document.getElementById('voltInput').value);
+            const dod = parseFloat(document.getElementById('batteryType').value);
             const customPV = parseFloat(document.getElementById('customPV').value) || 0;
+
+            const isAki = (dod < 0.8);
+            const storageName = isAki ? "Aki" : "Baterai";
 
             const finalWh = Math.ceil(totalWhBase * (mode === "AC" ? 1.15 : 1.05));
             
-            // 1. Pembulatan Baterai
-            const rawAh = Math.ceil(finalWh / (volt * 0.8));
+            // 1. Logic Ah & Pembulatan
+            const rawAh = Math.ceil(finalWh / (volt * dod));
             let marketAh = rawAh <= 20 ? 20 : rawAh <= 50 ? 50 : rawAh <= 100 ? 100 : Math.ceil(rawAh / 50) * 50;
 
-            // 2. Pembulatan Panel & Hari
+            // 2. Logic WP & Hari
             const rawWP = Math.ceil(finalWh / (4 * 0.85));
             let marketWP = rawWP <= 50 ? 50 : rawWP <= 100 ? 100 : Math.ceil(rawWP / 100) * 100;
             const usedWP = customPV > 0 ? customPV : rawWP;
             const daysToCharge = Math.ceil(finalWh / (usedWP * 4 * 0.85));
 
-            // 3. Pembulatan SCC
+            // 3. Logic SCC
             const rawSCC = Math.ceil((usedWP / volt) * 1.25);
             let marketSCC = rawSCC <= 10 ? 10 : rawSCC <= 20 ? 20 : rawSCC <= 30 ? 30 : rawSCC <= 40 ? 40 : 60;
 
-            // 4. Inverter Logic
+            // 4. Inverter
             const rawInv = Math.ceil(instantWatt * 1.25);
             let marketInv = rawInv <= 500 ? 1000 : rawInv <= 1000 ? 1600 : 2000;
 
-            // Update UI
+            // Update UI Labels
             document.getElementById('resWh').innerText = finalWh.toLocaleString('id-ID') + " Wh";
             document.getElementById('resAh').innerText = rawAh + " Ah";
             document.getElementById('resDays').innerText = daysToCharge;
+            document.getElementById('storageLabel').innerText = "Kapasitas " + storageName;
             document.getElementById('outText').textContent = mode === "AC" ? "INV" : "DC";
-            document.getElementById('daySub').innerText = usedWP < rawWP ? `PV Custom (${usedWP}WP) kecil. Penuh dalam ~${daysToCharge} hari.` : "PV Ideal. Baterai penuh dalam 1 hari matahari.";
+            document.getElementById('daySub').innerText = usedWP < rawWP ? `PV Custom (${usedWP}WP) kecil. Penuh dalam ~${daysToCharge} hari.` : "PV Ideal. Penuh dalam 1 hari matahari.";
 
             if (mode === "AC") {
                 document.getElementById('inverterInfo').classList.remove('hidden');
-                document.getElementById('resInverter').innerText = marketInv + "W (Saran Keamanan)";
+                document.getElementById('resInverter').innerText = marketInv + "W (Continuous)";
             } else document.getElementById('inverterInfo').classList.add('hidden');
 
             const listDiv = document.getElementById('shoppingList');
@@ -214,16 +225,16 @@
             
             const shopItems = [
                 { n: `Panel Surya: ${usedWP} WP`, s: usedWP < marketWP ? `Di pasar gunakan **${marketWP} WP**` : "Cek Harga", l: LINKS.panel },
-                { n: `Baterai: ${rawAh} Ah`, s: rawAh < marketAh ? `Di pasar gunakan **${marketAh} Ah**` : "Cek Harga", l: LINKS.baterai },
+                { n: `${storageName}: ${rawAh} Ah`, s: rawAh < marketAh ? `Di pasar gunakan **${marketAh} Ah**` : `Tipe: ${isAki ? 'GEL' : 'LiFePO4'}`, l: LINKS.baterai },
                 { n: `SCC MPPT: ${rawSCC}A`, s: rawSCC < marketSCC ? `Saran Pasar: **${marketSCC}A**` : "Cek Harga", l: LINKS.scc }
             ];
 
             if (mode === "AC") {
                 shopItems.push({ n: `Inverter ${marketInv}W`, s: hasHeavyLoad ? `Wajib **Pure Sine Wave** (${heavyName})` : "Tipe PSW", l: LINKS.inverter });
-                shopItems.push({ n: `MCB DC Breaker (${marketSCC}A)`, s: "Jalur PV & Jalur Baterai", l: LINKS.mcb });
+                shopItems.push({ n: `MCB DC Breaker (${marketSCC}A)`, s: "Jalur PV & Jalur " + storageName, l: LINKS.mcb });
                 shopItems.push({ n: `MCB AC Breaker (1P)`, s: "Jalur Beban Setelah Inverter", l: LINKS.mcb });
             } else {
-                shopItems.push({ n: `MCB DC Breaker (${marketSCC}A)`, s: "Proteksi PV, Baterai & Load DC", l: LINKS.mcb });
+                shopItems.push({ n: `MCB DC Breaker (${marketSCC}A)`, s: "Proteksi PV, " + storageName + " & Load DC", l: LINKS.mcb });
             }
 
             let arrV = volt <= 24 ? "500V" : "1000V";
@@ -236,7 +247,7 @@
                     <p class="text-[9px] text-slate-400 font-black uppercase text-center mt-1 mb-3">
                         ${item.s.replace(/\*\*(.*?)\*\*/g, '<span class="text-blue-600 font-bold">$1</span>')}
                     </p>
-                    <a href="${item.l}" target="_blank" class="bg-[#ee4d2d] text-white text-[10px] font-black py-2 px-6 rounded-full uppercase tracking-tighter">🛒 Beli Shopee</a>
+                    <a href="${item.l}" target="_blank" class="bg-[#ee4d2d] text-white text-[10px] font-black py-2 px-6 rounded-full uppercase tracking-tighter transition-all hover:scale-105">🛒 Beli Shopee</a>
                 </div>`;
             });
 
