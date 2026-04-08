@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PLTS Calc - Ayub R</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-amber-50 min-h-screen p-4 font-sans text-slate-800">
+
+    <div class="max-w-2xl mx-auto">
+        <header class="bg-white p-6 rounded-2xl shadow-sm border border-amber-200 mb-6 flex items-center gap-4">
+            <div class="bg-amber-100 p-3 rounded-xl text-2xl">☀️</div>
+            <div>
+                <h1 class="text-xl font-bold text-amber-600">PLTS Solar Calculator</h1>
+                <p class="text-sm text-slate-500">Hitung kebutuhan Panel & Aki instan</p>
+            </div>
+        </header>
+
+        <div class="bg-white p-6 rounded-2xl shadow-md border border-amber-100 mb-6">
+            <div class="grid gap-4">
+                <div>
+                    <label class="block text-sm font-semibold mb-1 text-slate-600">Total Beban (Watt)</label>
+                    <input type="number" id="wattInput" placeholder="Contoh: 100" 
+                           class="w-full p-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-amber-400 outline-none transition-all">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold mb-1 text-slate-600">Lama Pemakaian (Jam/Hari)</label>
+                    <input type="number" id="hourInput" placeholder="Contoh: 12" 
+                           class="w-full p-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-amber-400 outline-none transition-all">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold mb-1 text-slate-600">Voltase Sistem (V)</label>
+                    <select id="voltInput" class="w-full p-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-amber-400 outline-none bg-white">
+                        <option value="12">12 Volt (Standar)</option>
+                        <option value="24">24 Volt (Menengah)</option>
+                        <option value="48">48 Volt (Besar)</option>
+                    </select>
+                </div>
+                <button onclick="hitungPLTS()" 
+                        class="mt-4 bg-amber-500 hover:bg-amber-600 text-white font-bold py-4 rounded-xl shadow-lg shadow-amber-200 transition-all active:scale-95">
+                    ⚡ Hitung Kebutuhan
+                </button>
+            </div>
+        </div>
+
+        <div id="resultBox" class="hidden space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div class="bg-amber-500 text-white p-6 rounded-2xl shadow-lg">
+                <p class="text-amber-100 text-sm uppercase font-bold tracking-wider">Total Konsumsi Harian</p>
+                <h2 id="resWh" class="text-4xl font-black italic mt-1">0 Wh</h2>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+                    <p class="text-xs text-slate-400 font-bold uppercase mb-1">Panel Surya (Min)</p>
+                    <p id="resWP" class="text-2xl font-black text-amber-600">0 WP</p>
+                </div>
+                <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+                    <p class="text-xs text-slate-400 font-bold uppercase mb-1">Kapasitas Aki</p>
+                    <p id="resAh" class="text-2xl font-black text-blue-600">0 Ah</p>
+                </div>
+            </div>
+
+            <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm italic text-xs text-slate-400">
+                * Estimasi menggunakan 4 jam matahari efektif dan faktor rugi-rugi 20%.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function hitungPLTS() {
+            const watt = parseFloat(document.getElementById('wattInput').value);
+            const hour = parseFloat(document.getElementById('hourInput').value);
+            const volt = parseFloat(document.getElementById('voltInput').value);
+
+            if (!watt || !hour) {
+                alert("Masukkan Watt dan Jam dulu ya!");
+                return;
+            }
+
+            // 1. Total Watt-hour
+            const wh = watt * hour;
+            
+            // 2. Kebutuhan Panel (Dihitung dengan faktor efisiensi 0.8 dan 4 jam matahari)
+            const wp = Math.ceil(wh / (4 * 0.8));
+
+            // 3. Kebutuhan Aki (Ah) dengan Depth of Discharge 50% agar aki awet
+            const ah = Math.ceil(wh / (volt * 0.5));
+
+            // Tampilkan Hasil
+            document.getElementById('resWh').innerText = wh + " Wh";
+            document.getElementById('resWP').innerText = wp + " WP";
+            document.getElementById('resAh').innerText = ah + " Ah";
+            document.getElementById('resultBox').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
