@@ -4,9 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <title>Kalkulator PLTS Mandiri - Hitung Panel Surya & Baterai Marketplace</title>
-    <meta name="description" content="Tools gratis hitung kebutuhan PLTS akurat. Deteksi otomatis beban kejut Kulkas/AC, saran kapasitas pasar Shopee, dan skema keamanan MCB.">
-    <meta name="keywords" content="kalkulator plts, hitung panel surya, hitung baterai lifepo4, plts kulkas, plts ac, plts setrika">
+    <title>PLTS Expert - Kalkulator Panel Surya & Baterai Profesional</title>
+    <meta name="description" content="Kalkulator PLTS dengan detail MCB DC/AC, Arrester, dan pembulatan kapasitas pasar untuk SCC, Panel, dan Baterai.">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
@@ -32,7 +31,7 @@
         <div class="max-w-6xl mx-auto flex justify-between items-center">
             <div>
                 <h1 class="font-black tracking-tighter text-2xl uppercase text-yellow-400 leading-none">PLTS<span class="text-white">EXPERT</span></h1>
-                <p class="text-[9px] text-slate-400 font-bold tracking-[0.2em] mt-1 uppercase font-bold italic">Smart Logic & Safety Guide</p>
+                <p class="text-[9px] text-slate-400 font-bold tracking-[0.2em] mt-1 uppercase font-bold italic text-center">Detail Engineering & Shopping Guide</p>
             </div>
         </div>
     </nav>
@@ -48,7 +47,7 @@
                 
                 <div class="space-y-3 mb-6" id="loadContainer">
                     <div class="grid grid-cols-12 gap-2 load-row items-center border-b pb-3 border-slate-50">
-                        <input type="text" placeholder="Kulkas/Lampu/AC" class="col-span-5 p-3 bg-slate-50 rounded-xl text-xs font-bold outline-none border border-transparent focus:border-yellow-500 text-slate-800">
+                        <input type="text" placeholder="Nama Alat" class="col-span-5 p-3 bg-slate-50 rounded-xl text-xs font-bold outline-none border border-transparent focus:border-yellow-500 text-slate-800">
                         <input type="number" placeholder="Watt" class="col-span-3 p-3 bg-slate-50 rounded-xl text-xs font-bold watt-val">
                         <input type="number" placeholder="Jam" class="col-span-3 p-3 bg-slate-50 rounded-xl text-xs font-bold hour-val">
                         <button onclick="this.parentElement.remove()" class="col-span-1 text-red-400 font-bold">×</button>
@@ -58,14 +57,14 @@
                 <div class="space-y-4 pt-4 border-t border-slate-100">
                     <div class="grid grid-cols-2 gap-3 text-xs font-bold text-center">
                         <div class="space-y-1">
-                            <label class="text-slate-400 uppercase">Sistem Arus</label>
+                            <label class="text-slate-400 uppercase">Arus Output</label>
                             <select id="modeInput" class="w-full p-4 bg-slate-900 text-white rounded-2xl outline-none">
                                 <option value="AC">AC (Inverter)</option>
                                 <option value="DC">DC (Full DC)</option>
                             </select>
                         </div>
                         <div class="space-y-1">
-                            <label class="text-slate-400 uppercase">Voltase Sistem</label>
+                            <label class="text-slate-400 uppercase">Voltase Baterai</label>
                             <select id="voltInput" class="w-full p-4 bg-slate-50 rounded-2xl border border-slate-200 outline-none text-slate-800">
                                 <option value="12">12V</option>
                                 <option value="24">24V</option>
@@ -73,16 +72,9 @@
                             </select>
                         </div>
                     </div>
-                    <div class="space-y-1">
-                        <label class="text-[10px] font-bold text-slate-400 uppercase text-center block font-bold">Penyimpanan</label>
-                        <select id="batteryType" class="w-full p-4 bg-blue-50 text-blue-700 rounded-2xl font-bold text-xs border border-blue-100 outline-none">
-                            <option value="0.8">LiFePO4 (DoD 80%)</option>
-                            <option value="0.5">Aki GEL (DoD 50%)</option>
-                        </select>
-                    </div>
                     <div class="bg-amber-50 p-4 rounded-2xl border border-amber-100">
-                        <label class="block text-[10px] font-bold text-amber-700 uppercase mb-1 font-bold">PV Custom (WP)</label>
-                        <input type="number" id="customPV" placeholder="Kosongkan Untuk Auto" class="w-full p-3 bg-white border border-amber-200 rounded-xl font-bold text-sm outline-none text-slate-800">
+                        <label class="block text-[10px] font-bold text-amber-700 uppercase mb-1 font-bold">PV Custom (Optional)</label>
+                        <input type="number" id="customPV" placeholder="WP" class="w-full p-3 bg-white border border-amber-200 rounded-xl font-bold text-sm outline-none">
                     </div>
                     <button onclick="processSystem()" class="w-full bg-yellow-400 text-slate-900 font-black py-5 rounded-2xl hover:bg-slate-900 hover:text-white transition-all uppercase tracking-tighter shadow-xl">Rancang Sistem ⚡</button>
                 </div>
@@ -94,34 +86,21 @@
                 
                 <div id="dangerAlert" class="bg-red-600 text-white p-6 rounded-[2rem] flex items-start gap-4 hidden shadow-xl shadow-red-100">
                     <span class="text-2xl">⚠️</span>
-                    <p id="dangerText" class="text-sm font-bold leading-relaxed"></p>
-                </div>
-
-                <div class="bg-white p-6 rounded-[2.5rem] border border-slate-200 shadow-sm flex items-center gap-6">
-                    <div class="w-16 h-16 bg-slate-900 rounded-full flex items-center justify-center text-yellow-400 border-2 border-yellow-400 font-black text-2xl italic" id="resDays">1</div>
-                    <div class="flex-1">
-                        <h4 class="font-black text-slate-800 uppercase text-xs tracking-widest leading-none">Hari Penjemuran</h4>
-                        <p class="text-[10px] text-slate-400 leading-tight mt-1 font-bold" id="daySub"></p>
-                    </div>
+                    <p id="dangerText" class="text-sm font-bold"></p>
                 </div>
 
                 <div class="grid grid-cols-2 gap-4 text-center">
                     <div class="bg-slate-900 rounded-[2rem] p-6 text-white shadow-lg">
-                        <p class="text-[10px] font-bold text-slate-500 uppercase mb-1 italic">Produksi Wh</p>
-                        <h3 id="resWh" class="text-3xl font-black text-yellow-400 font-black">0 Wh</h3>
+                        <p class="text-[10px] font-bold text-slate-500 uppercase mb-1 italic">Total Produksi</p>
+                        <h3 id="resWh" class="text-3xl font-black text-yellow-400">0 Wh</h3>
                     </div>
                     <div class="bg-white p-6 rounded-[2rem] border border-slate-200 shadow-sm">
-                        <p class="text-slate-400 text-[10px] font-bold uppercase mb-1">Kebutuhan Aki</p>
-                        <h3 id="resAh" class="text-3xl font-black text-blue-600 font-black">0 Ah</h3>
+                        <p class="text-slate-400 text-[10px] font-bold uppercase mb-1">Aki/Baterai</p>
+                        <h3 id="resAh" class="text-3xl font-black text-blue-600">0 Ah</h3>
                     </div>
                 </div>
 
-                <div id="inverterInfo" class="bg-blue-600 text-white p-5 rounded-[2.5rem] shadow-lg hidden">
-                    <p class="text-[10px] font-bold uppercase opacity-80 mb-1">Inverter Recommended</p>
-                    <h3 id="resInverter" class="text-xl font-black italic">0W</h3>
-                </div>
-
-                <div class="bg-white p-6 md:p-8 rounded-[2.5rem] border border-slate-200 shadow-sm overflow-x-auto">
+                <div class="bg-white p-8 rounded-[2.5rem] border border-slate-200 text-center shadow-sm overflow-x-auto">
                     <svg viewBox="0 0 600 140" class="w-full min-w-[500px]">
                         <line x1="60" y1="70" x2="540" y2="70" stroke="#cbd5e1" stroke-width="2" class="line-flow"/>
                         <circle cx="60" cy="70" r="25" fill="#facc15"/><text x="60" y="73" font-size="8" font-weight="bold" text-anchor="middle">PV</text>
@@ -135,13 +114,13 @@
                 </div>
 
                 <div class="bg-white p-8 rounded-[3rem] border border-slate-200 shadow-sm relative">
-                    <h3 class="font-black text-lg mb-4 text-center">🛒 Rekomendasi Marketplace</h3>
+                    <h3 class="font-black text-lg mb-4 text-center">🛒 Daftar Belanja (Sesuai Standar)</h3>
                     <div id="shoppingList" class="grid gap-3"></div>
                 </div>
             </div>
 
             <div id="placeholder" class="h-64 border-4 border-dashed border-slate-200 rounded-[3rem] flex items-center justify-center opacity-40 font-black text-slate-300 italic text-center p-4">
-                INPUT DAFTAR ALAT & RANCANG SISTEM
+                HASIL ANALISA & BELANJA AKAN MUNCUL DI SINI
             </div>
         </div>
     </div>
@@ -159,7 +138,7 @@
             const container = document.getElementById('loadContainer');
             const row = document.createElement('div');
             row.className = "grid grid-cols-12 gap-2 load-row items-center border-b pb-3 border-slate-50";
-            row.innerHTML = `<input type="text" placeholder="Kulkas/Lampu/AC" class="col-span-5 p-3 bg-slate-50 rounded-xl text-xs font-bold outline-none text-slate-800">
+            row.innerHTML = `<input type="text" placeholder="Nama Alat" class="col-span-5 p-3 bg-slate-50 rounded-xl text-xs font-bold outline-none text-slate-800">
                              <input type="number" placeholder="W" class="col-span-3 p-3 bg-slate-50 rounded-xl text-xs font-bold watt-val">
                              <input type="number" placeholder="J" class="col-span-3 p-3 bg-slate-50 rounded-xl text-xs font-bold hour-val">
                              <button onclick="this.parentElement.remove()" class="col-span-1 text-red-400 font-bold">×</button>`;
@@ -179,78 +158,74 @@
                 const h = parseFloat(hours[i].value) || 0;
                 const name = names[i].value.toLowerCase();
                 totalWhBase += vW * h;
-
-                // Smart Detection Beban Kejut
                 if (name.includes("kulkas") || name.includes("ac") || name.includes("setrika") || name.includes("pompa")) {
                     hasHeavyLoad = true; heavyName = names[i].value;
-                    instantWatt += vW * 3; // Buffer 3x untuk starting watt
-                } else {
-                    instantWatt += vW;
-                }
+                    instantWatt += vW * 3;
+                } else { instantWatt += vW; }
             });
 
-            if (totalWhBase <= 0) return alert("Isi alat!");
+            if (totalWhBase <= 0) return alert("Isi daftar alat!");
 
             const mode = document.getElementById('modeInput').value;
             const volt = parseFloat(document.getElementById('voltInput').value);
-            const dod = parseFloat(document.getElementById('batteryType').value);
             const customPV = parseFloat(document.getElementById('customPV').value) || 0;
 
             const finalWh = Math.ceil(totalWhBase * (mode === "AC" ? 1.15 : 1.05));
             
-            // Logic Baterai
-            const rawAh = Math.ceil(finalWh / (volt * dod));
+            // 1. PEMBULATAN BATERAI (50Ah/100Ah)
+            const rawAh = Math.ceil(finalWh / (volt * 0.8)); // Default LFP 80%
             let marketAh = rawAh <= 20 ? 20 : rawAh <= 50 ? 50 : rawAh <= 100 ? 100 : Math.ceil(rawAh / 50) * 50;
 
-            // Logic Panel
+            // 2. PEMBULATAN PANEL (50WP/100WP)
             const rawWP = Math.ceil(finalWh / (4 * 0.85));
             let marketWP = rawWP <= 50 ? 50 : rawWP <= 100 ? 100 : Math.ceil(rawWP / 100) * 100;
             const usedWP = customPV > 0 ? customPV : rawWP;
             
-            // Logic Inverter Pasar
+            // 3. PEMBULATAN SCC/MPPT (10A, 20A, 30A, 40A, 60A)
+            const rawSCC = Math.ceil((usedWP / volt) * 1.25);
+            let marketSCC = rawSCC <= 10 ? 10 : rawSCC <= 20 ? 20 : rawSCC <= 30 ? 30 : rawSCC <= 40 ? 40 : 60;
+
+            // 4. LOGIKA INVERTER
             const rawInv = Math.ceil(instantWatt * 1.25);
-            let marketInv = rawInv <= 500 ? 1000 : rawInv <= 1000 ? 1600 : rawInv <= 1600 ? 2000 : Math.ceil(rawInv / 1000) * 1000 + 1000;
+            let marketInv = rawInv <= 500 ? 1000 : rawInv <= 1000 ? 1600 : 2000;
 
-            const daysToCharge = Math.ceil(finalWh / (usedWP * 4 * 0.85));
-
+            // Update UI
             document.getElementById('resWh').innerText = finalWh.toLocaleString('id-ID') + " Wh";
             document.getElementById('resAh').innerText = rawAh + " Ah";
-            document.getElementById('resDays').innerText = daysToCharge;
             document.getElementById('outText').textContent = mode === "AC" ? "INV" : "DC";
-            document.getElementById('daySub').innerText = `Penuh dalam ~${daysToCharge} hari matahari.`;
-
-            if (mode === "AC") {
-                document.getElementById('inverterInfo').classList.remove('hidden');
-                document.getElementById('resInverter').innerText = marketInv + "W (Continuous)";
-            } else document.getElementById('inverterInfo').classList.add('hidden');
 
             const listDiv = document.getElementById('shoppingList');
             listDiv.innerHTML = '';
             
             const shopItems = [
-                { n: `Panel Surya: ${usedWP} WP`, s: usedWP < marketWP ? `Gunakan Minimal **${marketWP} WP**` : "Cek Harga Panel", l: LINKS.panel },
-                { n: `Baterai: ${rawAh} Ah`, s: rawAh < marketAh ? `Gunakan Minimal **${marketAh} Ah**` : "Cek Harga Baterai", l: LINKS.baterai },
-                { n: `SCC MPPT ${Math.ceil((usedWP/volt)*1.25)}A`, s: "Pengontrol Arus", l: LINKS.scc }
+                { n: `Panel Surya: ${usedWP} WP`, s: usedWP < marketWP ? `Saran Pasar: **${marketWP} WP**` : "Cek Harga", l: LINKS.panel },
+                { n: `Baterai: ${rawAh} Ah`, s: rawAh < marketAh ? `Saran Pasar: **${marketAh} Ah**` : "Cek Harga", l: LINKS.baterai },
+                { n: `SCC MPPT: ${rawSCC}A`, s: rawSCC < marketSCC ? `Saran Pasar: **${marketSCC} Ampere**` : "Cek Harga", l: LINKS.scc }
             ];
-            if (mode === "AC") shopItems.push({ n: `Inverter ${marketInv}W`, s: hasHeavyLoad ? `Wajib **Pure Sine Wave** (${heavyName})` : "Tipe PSW", l: LINKS.inverter });
-            shopItems.push({ n: "MCB & Arrester", s: "Keamanan Sistem", l: LINKS.mcb });
+
+            if (mode === "AC") {
+                shopItems.push({ n: `Inverter ${marketInv}W`, s: "Wajib Pure Sine Wave (PSW)", l: LINKS.inverter });
+                // MCB DETAIL UNTUK AC
+                shopItems.push({ n: `MCB DC Breaker (${marketSCC}A)`, s: "Jalur PV & Jalur Baterai (DC)", l: LINKS.mcb });
+                shopItems.push({ n: `MCB AC Breaker (1P)`, s: "Jalur Beban (Setelah Inverter)", l: LINKS.mcb });
+            } else {
+                shopItems.push({ n: `MCB DC Breaker (${marketSCC}A)`, s: "Proteksi PV, Baterai & Load DC", l: LINKS.mcb });
+            }
+
+            // ARRESTER DETAIL
+            let arresterVolt = volt <= 24 ? "DC 500V" : "DC 1000V";
+            shopItems.push({ n: `Surge Arrester ${arresterVolt}`, s: "Pengaman Petir Jalur Panel", l: LINKS.mcb });
 
             shopItems.forEach(item => {
                 listDiv.innerHTML += `
                 <div class="p-4 bg-slate-50 rounded-3xl border border-slate-100 flex flex-col items-center">
-                    <p class="font-bold text-slate-800 text-sm text-center">${item.n}</p>
+                    <p class="font-bold text-slate-800 text-sm text-center leading-tight">${item.n}</p>
                     <p class="text-[9px] text-slate-400 font-black uppercase text-center mt-1 mb-3">
                         ${item.s.replace(/\*\*(.*?)\*\*/g, '<span class="text-blue-600 font-bold">$1</span>')}
                     </p>
-                    <a href="${item.l}" target="_blank" class="bg-[#ee4d2d] text-white text-[10px] font-black py-2 px-6 rounded-full hover:scale-105 transition-all uppercase tracking-tighter">🛒 Beli Shopee</a>
+                    <a href="${item.l}" target="_blank" class="bg-[#ee4d2d] text-white text-[10px] font-black py-2 px-6 rounded-full uppercase tracking-tighter">🛒 Beli Shopee</a>
                 </div>`;
             });
-
-            document.getElementById('dangerAlert').classList.add('hidden');
-            if (hasHeavyLoad && volt == 12) {
-                document.getElementById('dangerAlert').classList.remove('hidden');
-                document.getElementById('dangerText').innerHTML = `Bahaya! Sistem 12V tidak kuat untuk ${heavyName}. Gunakan 24V atau 48V agar kabel tidak terbakar!`;
-            }
 
             document.getElementById('placeholder').classList.add('hidden');
             document.getElementById('resultArea').classList.remove('hidden');
