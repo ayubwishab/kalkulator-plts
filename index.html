@@ -3,22 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PLTS Expert - Fixed Version</title>
+    <title>PLTS Expert - Safety First Version</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
         .line-flow { stroke-dasharray: 5; animation: flow 2s linear infinite; }
         @keyframes flow { to { stroke-dashoffset: -10; } }
+        /* Animasi Glow untuk Alert MCB agar menarik perhatian */
+        .mcb-alert { animation: mcb-glow 1.5s infinite; }
+        @keyframes mcb-glow { 0% { fill: #ef4444; } 50% { fill: #b91c1c; } 100% { fill: #ef4444; } }
     </style>
 </head>
-<body class="bg-[#f1f5f9] min-h-screen pb-20 text-slate-900">
+<body class="bg-[#f1f5f9] min-h-screen pb-20 text-slate-900 uppercase-none">
 
     <nav class="bg-slate-900 text-white p-6 sticky top-0 z-50 shadow-2xl">
         <div class="max-w-6xl mx-auto flex justify-between items-center">
             <div>
-                <h1 class="font-black tracking-tighter text-2xl uppercase text-yellow-400">PLTS<span class="text-white">EXPERT</span></h1>
-                <p class="text-[9px] text-slate-400 font-bold tracking-[0.2em] mt-1 uppercase text-center">Audit & Perencanaan Aman</p>
+                <h1 class="font-black tracking-tighter text-2xl uppercase text-yellow-400 leading-none">PLTS<span class="text-white">EXPERT</span></h1>
+                <p class="text-[9px] text-slate-400 font-bold tracking-[0.2em] mt-1 uppercase text-center">Audit, Perencanaan & Keamanan SNI</p>
             </div>
         </div>
     </nav>
@@ -26,7 +29,7 @@
     <div class="max-w-6xl mx-auto p-4 mt-8 grid lg:grid-cols-12 gap-8">
         
         <div class="lg:col-span-5 space-y-6">
-            <div class="bg-white p-6 md:p-8 rounded-[2.5rem] shadow-sm border border-slate-200">
+            <div class="bg-white p-6 md:p-8 rounded-[2.5rem] shadow-sm border border-slate-200 overflow-hidden relative">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-xs font-black uppercase tracking-widest text-slate-400">📋 Daftar Perangkat</h2>
                     <button onclick="addRow()" class="bg-yellow-400 text-slate-900 px-3 py-1 rounded-full text-[10px] font-black hover:bg-yellow-500 transition-all">+ ALAT</button>
@@ -46,13 +49,13 @@
                         <div class="space-y-1">
                             <label class="text-slate-400 uppercase">Sistem Arus</label>
                             <select id="modeInput" class="w-full p-4 bg-slate-900 text-white rounded-2xl outline-none">
-                                <option value="AC">Sistem AC</option>
-                                <option value="DC">Sistem DC</option>
+                                <option value="AC">AC (Inverter)</option>
+                                <option value="DC">DC (Full DC)</option>
                             </select>
                         </div>
                         <div class="space-y-1">
-                            <label class="text-slate-400 uppercase">Voltase Aki</label>
-                            <select id="voltInput" class="w-full p-4 bg-slate-50 rounded-2xl border border-slate-200">
+                            <label class="text-slate-400 uppercase">Voltase Aki/Baterai</label>
+                            <select id="voltInput" class="w-full p-4 bg-slate-50 rounded-2xl border border-slate-200 outline-none">
                                 <option value="12">12V</option>
                                 <option value="24">24V</option>
                                 <option value="48">48V</option>
@@ -60,11 +63,11 @@
                         </div>
                     </div>
 
-                    <div class="space-y-1">
+                    <div class="space-y-1 overflow-hidden">
                         <label class="text-[10px] font-bold text-slate-400 uppercase ml-2 text-center block">Tipe Baterai</label>
-                        <select id="batteryType" class="w-full p-4 bg-blue-50 text-blue-700 rounded-2xl font-bold text-xs border border-blue-100">
-                            <option value="0.5">Aki GEL (50%)</option>
-                            <option value="0.8">LiFePO4 (80%)</option>
+                        <select id="batteryType" class="w-full p-4 bg-blue-50 text-blue-700 rounded-2xl font-bold text-xs border border-blue-100 outline-none">
+                            <option value="0.5">Aki GEL (DoD 50%)</option>
+                            <option value="0.8">LiFePO4 (DoD 80%)</option>
                         </select>
                     </div>
 
@@ -81,49 +84,60 @@
         </div>
 
         <div class="lg:col-span-7 space-y-6">
-            <div id="resultArea" class="hidden space-y-6">
-                <div id="dangerAlert" class="bg-red-600 text-white p-6 rounded-[2rem] flex items-start gap-4 hidden">
+            <div id="resultArea" class="hidden space-y-6 animate-in fade-in duration-700">
+                <div id="dangerAlert" class="bg-red-600 text-white p-6 rounded-[2rem] flex items-start gap-4 hidden shadow-xl shadow-red-100">
                     <span class="text-2xl">⚠️</span>
-                    <p id="dangerText" class="text-sm font-bold"></p>
+                    <p id="dangerText" class="text-sm font-bold leading-relaxed"></p>
                 </div>
 
                 <div class="bg-white p-6 rounded-[2.5rem] border border-slate-200 shadow-sm flex items-center gap-6">
                     <div class="w-16 h-16 bg-slate-900 rounded-full flex items-center justify-center text-yellow-400 border-2 border-yellow-400 font-black text-2xl italic" id="resDays">1</div>
                     <div>
-                        <h4 class="font-black text-slate-800 uppercase text-xs tracking-widest">Hari Pengisian</h4>
-                        <p class="text-[10px] text-slate-400 leading-tight" id="daySub"></p>
+                        <h4 class="font-black text-slate-800 uppercase text-xs tracking-widest leading-none">Hari Pengisian</h4>
+                        <p class="text-[10px] text-slate-400 leading-tight mt-1" id="daySub"></p>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-2 gap-4">
-                    <div class="bg-slate-900 rounded-[2rem] p-6 text-white text-center">
-                        <p class="text-[10px] font-bold text-slate-500 uppercase mb-1 italic">Total Beban + Loss</p>
-                        <h3 id="resWh" class="text-3xl font-black text-yellow-400">0 Wh</h3>
+                    <div class="bg-slate-900 rounded-[2rem] p-6 text-white text-center shadow-lg">
+                        <p class="text-[10px] font-bold text-slate-500 uppercase mb-1 italic">Beban Real (+Loss)</p>
+                        <h3 id="resWh" class="text-3xl font-black text-yellow-400 leading-none">0 Wh</h3>
                     </div>
-                    <div class="bg-white p-6 rounded-[2rem] border border-slate-200 text-center">
-                        <p class="text-slate-400 text-[10px] font-bold uppercase mb-1">Kebutuhan Aki</p>
-                        <h3 id="resAh" class="text-3xl font-black text-blue-600">0 Ah</h3>
+                    <div class="bg-white p-6 rounded-[2rem] border border-slate-200 text-center shadow-sm">
+                        <p class="text-slate-400 text-[10px] font-bold uppercase mb-1">Kebutuhan Aki/Baterai</p>
+                        <h3 id="resAh" class="text-3xl font-black text-blue-600 leading-none leading-none">0 Ah</h3>
                     </div>
                 </div>
 
-                <div class="bg-white p-6 rounded-[2.5rem] border border-slate-200 text-center overflow-x-auto">
-                    <h4 class="text-[9px] font-black uppercase text-slate-300 mb-4 tracking-widest text-center">Skema Instalasi Aman</h4>
-                    <svg viewBox="0 0 500 120" class="w-full min-w-[400px]">
-                        <line x1="60" y1="60" x2="440" y2="60" stroke="#cbd5e1" stroke-width="2" class="line-flow"/>
-                        <circle cx="60" cy="60" r="25" fill="#facc15"/><text x="60" y="64" font-size="8" font-weight="bold" text-anchor="middle">PV</text>
-                        <circle cx="180" cy="60" r="25" fill="#1e293b"/><text x="180" y="64" font-size="8" font-weight="bold" text-anchor="middle" fill="white">SCC</text>
-                        <circle cx="300" cy="60" r="25" fill="#2563eb"/><text x="300" y="64" font-size="8" font-weight="bold" text-anchor="middle" fill="white">BAT</text>
-                        <circle cx="420" cy="60" r="25" fill="#9333ea"/><text x="420" y="64" font-size="8" font-weight="bold" text-anchor="middle" fill="white" id="outText">OUT</text>
+                <div class="bg-white p-6 md:p-8 rounded-[2.5rem] border border-slate-200 text-center overflow-x-auto shadow-sm">
+                    <h4 class="text-[9px] font-black uppercase text-slate-300 mb-6 tracking-widest text-center leading-none">Skema Instalasi Aman (Wajib Pakai MCB DC)</h4>
+                    <svg viewBox="0 0 600 140" class="w-full min-w-[500px]">
+                        <line x1="60" y1="70" x2="540" y2="70" stroke="#cbd5e1" stroke-width="2" class="line-flow"/>
+                        <line x1="300" y1="95" x2="300" y2="120" stroke="#cbd5e1" stroke-width="2"/>
+                        
+                        <circle cx="60" cy="70" r="25" fill="#facc15"/><text x="60" y="73" font-size="8" font-weight="bold" text-anchor="middle">PV</text>
+                        <circle cx="300" cy="70" r="25" fill="#1e293b"/><text x="300" y="73" font-size="8" font-weight="bold" text-anchor="middle" fill="white">SCC</text>
+                        <circle cx="300" cy="120" r="20" fill="#2563eb"/><text x="300" y="123" font-size="8" font-weight="bold" text-anchor="middle" fill="white">BAT</text>
+                        <circle cx="540" cy="70" r="25" fill="#9333ea"/><text x="540" y="73" font-size="8" font-weight="bold" text-anchor="middle" fill="white" id="outText">OUT</text>
+                        
+                        <circle cx="180" cy="70" r="12" fill="#ef4444" class="mcb-alert"/><text x="180" y="73" font-size="7" fill="white" text-anchor="middle" font-weight="bold">MCB</circle>
+                        <text x="180" y="90" font-size="6" fill="#ef4444" text-anchor="middle" font-bold>(Min. scc A)</text>
+                        
+                        <circle cx="300" cy="95" r="10" fill="#ef4444" class="mcb-alert"/><text x="300" y="98" font-size="6" fill="white" text-anchor="middle" font-weight="bold">MCB</circle>
+                        
+                        <circle cx="420" cy="70" r="12" fill="#ef4444" class="mcb-alert"/><text x="420" y="73" font-size="7" fill="white" text-anchor="middle" font-weight="bold">MCB</circle>
                     </svg>
+                    <p class="text-[9px] text-slate-400 mt-4 italic font-bold uppercase tracking-widest">Alur Safety: PV &rarr; MCB &rarr; SCC &rarr; MCB &rarr; Baterai & Output</p>
                 </div>
 
-                <div class="bg-white p-8 rounded-[3rem] border border-slate-200 shadow-sm">
-                    <h3 class="font-black text-lg mb-4 text-center">🛒 Daftar Belanja</h3>
+                <div class="bg-white p-8 rounded-[3rem] border border-slate-200 shadow-sm relative overflow-hidden">
+                    <h3 class="font-black text-lg mb-4 text-center">🛒 Daftar Belanja Mandiri</h3>
                     <div id="shoppingList" class="grid gap-2"></div>
                 </div>
             </div>
 
-            <div id="placeholder" class="h-64 border-4 border-dashed border-slate-200 rounded-[3rem] flex items-center justify-center opacity-40 font-black text-slate-300 italic">
+            <div id="placeholder" class="h-64 border-4 border-dashed border-slate-200 rounded-[3rem] flex flex-col items-center justify-center opacity-40 font-black text-slate-300 italic">
+                <span class="text-6xl mb-4 grayscale">☀️</span>
                 LAKUKAN AUDIT DI KIRI
             </div>
         </div>
@@ -136,7 +150,7 @@
             row.className = "grid grid-cols-12 gap-2 load-row items-center border-b pb-3 border-slate-50";
             row.innerHTML = `<input type="text" placeholder="Nama Alat" class="col-span-5 p-3 bg-slate-50 rounded-xl text-xs font-bold outline-none">
                              <input type="number" placeholder="W" class="col-span-3 p-3 bg-slate-50 rounded-xl text-xs font-bold watt-val">
-                             <input type="number" placeholder="J" class="col-span-3 p-3 bg-slate-50 rounded-xl text-xs font-bold hour-val">
+                             <input type="number" placeholder="Jam" class="col-span-3 p-3 bg-slate-50 rounded-xl text-xs font-bold hour-val">
                              <button onclick="this.parentElement.remove()" class="col-span-1 text-red-400 font-bold">×</button>`;
             container.appendChild(row);
         }
@@ -161,7 +175,7 @@
             const dod = parseFloat(document.getElementById('batteryType').value);
             const customPV = parseFloat(document.getElementById('customPV').value) || 0;
 
-            // Parameter Utama
+            // Parameter Utama Sesuai Kesepakatan (Matahari 4 Jam, Efisiensi 0.85)
             const sunHours = 4;
             const efficiency = 0.85;
             const lossFactor = (mode === "AC") ? 1.15 : 1.05;
@@ -171,39 +185,44 @@
             const idealWP = Math.ceil(finalWh / (sunHours * efficiency));
             const usedWP = customPV > 0 ? customPV : idealWP;
             
-            // Hitung Hari
+            // Hitung Hari Pengisian
             const prodPerDay = usedWP * sunHours * efficiency;
             const daysToCharge = Math.ceil(finalWh / prodPerDay);
 
-            // Alert Keamanan
+            // Alert Keamanan (Mencegah Sistem 12V di Beban Besar)
             const dangerAlert = document.getElementById('dangerAlert');
             dangerAlert.classList.add('hidden');
             if (volt == 12 && (instantWatt > 500 || finalWh > 1500)) {
                 dangerAlert.classList.remove('hidden');
-                document.getElementById('dangerText').innerHTML = `Bahaya! Arus beban (${instantWatt}W) terlalu besar untuk 12V. <b>Wajib naik ke Sistem 24V atau 48V</b> agar kabel tidak panas/terbakar.`;
+                document.getElementById('dangerText').innerHTML = `Bahaya Kebakaran! Arus beban (${instantWatt}W) terlalu besar untuk 12V. <b>Wajib naik ke Sistem 24V atau 48V</b> agar kabel tidak panas/terbakar.`;
             }
 
-            // Update UI
+            // Update UI Summary
             document.getElementById('resWh').innerText = finalWh.toLocaleString('id-ID') + " Wh";
             document.getElementById('resAh').innerText = ah + " Ah";
             document.getElementById('resDays').innerText = daysToCharge;
             document.getElementById('outText').textContent = mode === "AC" ? "INVERTER" : "LOAD DC";
-            document.getElementById('daySub').innerText = usedWP < idealWP ? `PV Anda kecil (${usedWP}WP). Baterai penuh dalam ~${daysToCharge} hari jemur.` : "Kapasitas PV Ideal. Baterai penuh dalam 1 hari.";
+            
+            const usedPVType = usedWP < idealWP ? "Kecil" : "Ideal";
+            document.getElementById('daySub').innerText = `PV Anda ${usedPVType} (${usedWP}WP). Baterai penuh dalam ~${daysToCharge} hari jemur.`;
 
-            // Shopping List
+            // Shopping List & Saran MCB
             const sccAmp = Math.ceil((usedWP / volt) * 1.25);
             const list = [
                 { n: `Panel Surya: ${usedWP} WP`, s: "Daftar total panel surya" },
-                { n: `Aki: ${ah} Ah ${volt}V`, s: `Jenis: ${dod < 0.8 ? 'GEL' : 'LiFePO4'}` },
-                { n: `SCC: MPPT ${sccAmp} Ampere`, s: "Pengontrol arus matahari" }
+                { n: `Aki/Baterai: ${ah} Ah ${volt}V`, s: `Jenis baterai yang dipilih` },
+                { n: `SCC: MPPT ${sccAmp} Ampere`, s: "Sangat disarankan tipe MPPT" }
             ];
             if (mode === "AC") list.push({ n: "Inverter Pure Sine Wave", s: "Untuk beban AC 220V" });
-            list.push({ n: "MCB DC & Surge Arrester", s: "Wajib untuk keamanan petir & korslet" });
+            
+            // Tambahan MCB di Daftar Belanja agar User benar-benar paham
+            list.push({ n: `MCB DC Breaker (${sccAmp}A)`, s: "Wajib pasang 2 unit (Jalur Panel & Jalur Baterai)" });
+            list.push({ n: "Surge Arrester DC", s: "Pengaman petir untuk instalasi PV" });
 
             const listDiv = document.getElementById('shoppingList');
             listDiv.innerHTML = '';
             list.forEach(item => {
-                listDiv.innerHTML += `<div class="p-3 bg-slate-50 rounded-xl border border-slate-100 flex flex-col items-center"><p class="font-bold text-slate-800 text-sm">${item.n}</p><p class="text-[9px] text-slate-400 font-black uppercase text-center">${item.s}</p></div>`;
+                listDiv.innerHTML += `<div class="p-3 bg-slate-50 rounded-xl border border-slate-100 flex flex-col items-center border-l-4 border-l-slate-900"><p class="font-bold text-slate-800 text-sm text-center">${item.n}</p><p class="text-[9px] text-slate-400 font-black uppercase text-center leading-tight mt-1">${item.s}</p></div>`;
             });
 
             document.getElementById('placeholder').classList.add('hidden');
