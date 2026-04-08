@@ -3,23 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PLTS Builder Pro - Skema & Kalkulasi</title>
+    <title>PLTS Builder Pro - Smart Recommendation</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
-        .diagram-node { transition: all 0.3s ease; }
         .line-flow { stroke-dasharray: 5; animation: flow 2s linear infinite; }
         @keyframes flow { to { stroke-dashoffset: -10; } }
     </style>
 </head>
-<body class="bg-[#f1f5f9] min-h-screen pb-20 text-slate-900 uppercase-none">
+<body class="bg-[#f1f5f9] min-h-screen pb-20 text-slate-900">
 
     <nav class="bg-slate-900 text-white p-6 sticky top-0 z-50 shadow-2xl">
         <div class="max-w-6xl mx-auto flex justify-between items-center">
             <div>
                 <h1 class="font-black tracking-tighter text-2xl uppercase text-yellow-400">PLTS<span class="text-white">EXPERT</span></h1>
-                <p class="text-[9px] text-slate-400 font-bold tracking-[0.2em]">SISTEM PERENCANAAN MANDIRI</p>
+                <p class="text-[9px] text-slate-400 font-bold tracking-[0.2em]">SMART SOLAR CALCULATOR</p>
             </div>
         </div>
     </nav>
@@ -29,165 +28,171 @@
         <div class="lg:col-span-4 space-y-6">
             <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-200">
                 <h2 class="text-xs font-black uppercase tracking-widest text-slate-400 mb-8 flex items-center gap-2">
-                    <span class="w-2 h-4 bg-yellow-400 rounded-full"></span> Konfigurasi Input
+                    <span class="w-2 h-4 bg-yellow-400 rounded-full"></span> Parameter Sistem
                 </h2>
                 
                 <div class="space-y-5">
                     <div>
-                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Total Beban (Watt)</label>
-                        <input type="number" id="wattInput" placeholder="Misal: 400" class="w-full p-4 bg-slate-50 rounded-2xl border-2 border-transparent focus:border-yellow-500 outline-none font-bold text-lg">
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Total Konsumsi Harian (Wh)</label>
+                        <input type="number" id="whInput" placeholder="Misal: 1500" class="w-full p-4 bg-slate-50 rounded-2xl border-2 border-transparent focus:border-yellow-500 outline-none font-bold text-lg">
+                        <p class="text-[9px] text-slate-400 mt-1 italic">* Total Watt dikali Jam pemakaian (Contoh: Lampu 10W x 10 Jam = 100Wh)</p>
                     </div>
-                    <div>
-                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Pemakaian (Jam/Hari)</label>
-                        <input type="number" id="hourInput" placeholder="Misal: 10" class="w-full p-4 bg-slate-50 rounded-2xl border-2 border-transparent focus:border-yellow-500 outline-none font-bold text-lg">
-                    </div>
+
                     <div>
                         <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Tipe Output</label>
                         <select id="modeInput" class="w-full p-4 bg-slate-50 rounded-2xl border-2 border-transparent focus:border-yellow-500 outline-none font-bold">
-                            <option value="AC">Sistem AC (220V - Inverter)</option>
-                            <option value="DC">Sistem Full DC (12V/24V)</option>
+                            <option value="AC">Sistem AC (Pakai Inverter)</option>
+                            <option value="DC">Sistem Full DC (Hemat Energi)</option>
                         </select>
                     </div>
+
                     <div class="grid grid-cols-2 gap-3">
-                        <select id="voltInput" class="p-4 bg-slate-50 rounded-2xl font-bold text-xs border-2 border-transparent focus:border-yellow-500">
-                            <option value="12">12V</option>
-                            <option value="24">24V</option>
-                        </select>
-                        <select id="batteryType" class="p-4 bg-slate-50 rounded-2xl font-bold text-xs text-blue-600 border-2 border-transparent focus:border-yellow-500">
-                            <option value="0.5">Aki GEL</option>
-                            <option value="0.8">LiFePO4</option>
-                        </select>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2 text-center">Voltase Sistem</label>
+                            <select id="voltInput" class="w-full p-4 bg-slate-50 rounded-2xl font-bold text-xs border-2 border-transparent focus:border-yellow-500">
+                                <option value="12">12V</option>
+                                <option value="24">24V</option>
+                                <option value="48">48V</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2 text-center">Tipe Baterai</label>
+                            <select id="batteryType" class="w-full p-4 bg-slate-50 rounded-2xl font-bold text-xs text-blue-600 border-2 border-transparent focus:border-yellow-500">
+                                <option value="0.5">Aki GEL</option>
+                                <option value="0.8">LiFePO4</option>
+                            </select>
+                        </div>
                     </div>
+
                     <button onclick="buildSystem()" class="w-full bg-slate-900 text-white font-black py-5 rounded-2xl hover:bg-yellow-400 hover:text-slate-900 transition-all uppercase tracking-tighter mt-4 shadow-xl shadow-slate-200">
-                        Generate Analisa ⚡
+                        Hitung & Analisa ⚡
                     </button>
                 </div>
             </div>
         </div>
 
-        <div class="lg:col-span-8 space-y-8">
-            <div id="resultArea" class="hidden space-y-8 animate-in fade-in duration-700">
+        <div class="lg:col-span-8 space-y-6">
+            <div id="resultArea" class="hidden space-y-6 animate-in fade-in duration-700">
                 
-                <div class="bg-white p-8 rounded-[3rem] border border-slate-200 shadow-sm overflow-hidden">
-                    <h3 class="font-black text-xl mb-8 flex items-center gap-3 italic">
-                        🛠️ Skema Rangkaian Sistem Anda
-                    </h3>
-                    <div class="relative w-full overflow-x-auto pb-4">
-                        <svg viewBox="0 0 600 200" class="w-full min-w-[500px]">
-                            <line x1="100" y1="100" x2="200" y2="100" stroke="#cbd5e1" stroke-width="3" class="line-flow"/>
-                            <line x1="300" y1="100" x2="400" y2="100" stroke="#cbd5e1" stroke-width="3" class="line-flow"/>
-                            <line x1="250" y1="130" x2="250" y2="160" stroke="#cbd5e1" stroke-width="3"/>
-
-                            <rect x="20" y="70" width="80" height="60" rx="10" fill="#facc15" class="diagram-node"/>
-                            <text x="60" y="105" font-size="10" font-weight="bold" text-anchor="middle" fill="#854d0e">PANEL</text>
-                            
-                            <rect x="200" y="70" width="100" height="60" rx="10" fill="#1e293b" class="diagram-node"/>
-                            <text x="250" y="105" font-size="10" font-weight="bold" text-anchor="middle" fill="white">SCC (MPPT)</text>
-
-                            <rect x="200" y="160" width="100" height="40" rx="10" fill="#2563eb" class="diagram-node"/>
-                            <text x="250" y="185" font-size="10" font-weight="bold" text-anchor="middle" fill="white">BATTERY</text>
-
-                            <rect x="400" y="70" width="100" height="60" rx="10" fill="#9333ea" class="diagram-node"/>
-                            <text x="450" y="105" font-size="10" font-weight="bold" text-anchor="middle" fill="white" id="outText">INVERTER</text>
-
-                            <circle cx="150" cy="100" r="12" fill="#ef4444"/>
-                            <text x="150" y="104" font-size="8" font-weight="bold" text-anchor="middle" fill="white">MCB</text>
-                            <circle cx="350" cy="100" r="12" fill="#ef4444"/>
-                            <text x="350" y="104" font-size="8" font-weight="bold" text-anchor="middle" fill="white">MCB</text>
-                        </svg>
-                        <p class="text-[9px] text-center text-slate-400 mt-4 font-bold uppercase tracking-widest">Alur: Panel > MCB > SCC > Baterai & Inverter</p>
+                <div id="smartRec" class="bg-blue-600 text-white p-6 rounded-[2rem] shadow-lg flex items-start gap-4 hidden">
+                    <span class="text-2xl">💡</span>
+                    <div>
+                        <p class="font-black uppercase text-[10px] tracking-[0.2em] mb-1 opacity-80">Rekomendasi Hemat</p>
+                        <p id="recText" class="text-sm font-bold leading-relaxed"></p>
                     </div>
                 </div>
 
-                <div class="grid md:grid-cols-2 gap-6">
-                    <div class="bg-slate-900 rounded-[2.5rem] p-8 text-white shadow-xl">
-                        <p class="text-slate-500 text-[10px] font-bold uppercase mb-2">Total Beban Real (+Loss)</p>
-                        <h3 id="resWh" class="text-4xl font-black text-yellow-400">0 Wh</h3>
-                        <div class="mt-6 space-y-2 border-t border-white/10 pt-4">
-                            <div class="flex justify-between text-xs"><span class="text-slate-400">Min. Panel</span> <span id="resWP" class="font-bold">0 WP</span></div>
-                            <div class="flex justify-between text-xs"><span class="text-slate-400">Min. Baterai</span> <span id="resAh" class="font-bold text-blue-400">0 Ah</span></div>
-                            <div class="flex justify-between text-xs"><span class="text-slate-400">SCC Breaker</span> <span id="resSCC" class="font-bold text-red-400">0 A</span></div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-slate-900 rounded-[2.5rem] p-8 text-white">
+                        <p class="text-slate-500 text-[10px] font-bold uppercase mb-2 tracking-widest text-center">Kebutuhan Panel Surya</p>
+                        <h3 id="resWP" class="text-5xl font-black text-yellow-400 text-center">0 WP</h3>
+                        <div class="mt-6 border-t border-white/10 pt-4 text-[10px] text-center text-slate-400 font-medium">
+                            * Efisiensi 0.85 | 4 Jam Matahari Efektif
                         </div>
                     </div>
 
-                    <div class="bg-white p-8 rounded-[2.5rem] border border-slate-200 shadow-sm flex flex-col justify-center">
-                        <h4 class="text-xs font-black mb-4 uppercase text-slate-400 tracking-widest">Saran Kabel Utama</h4>
-                        <p id="resKabel" class="text-4xl font-black text-slate-900">0 mm²</p>
-                        <p class="text-[10px] mt-2 text-slate-400">Gunakan kabel Tembaga Murni (NYAF/AWG) untuk keamanan jangka panjang.</p>
+                    <div class="bg-white p-8 rounded-[2.5rem] border border-slate-200 shadow-sm text-center">
+                        <p class="text-slate-400 text-[10px] font-bold uppercase mb-2 tracking-widest text-center">Kapasitas Baterai</p>
+                        <h3 id="resAh" class="text-5xl font-black text-blue-600">0 Ah</h3>
+                        <p id="resKabel" class="text-[10px] mt-4 text-slate-400 font-bold italic uppercase"></p>
                     </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-[2.5rem] border border-slate-200 shadow-sm overflow-hidden text-center">
+                    <h4 class="text-[10px] font-black uppercase text-slate-400 mb-4 tracking-widest">Alur Pemasangan Safety</h4>
+                    <svg viewBox="0 0 400 100" class="w-full max-w-md mx-auto">
+                        <line x1="50" y1="50" x2="350" y2="50" stroke="#cbd5e1" stroke-width="2" class="line-flow"/>
+                        <circle cx="50" cy="50" r="25" fill="#facc15"/><text x="50" y="54" font-size="7" font-weight="bold" text-anchor="middle">PANEL</text>
+                        <circle cx="150" cy="50" r="25" fill="#1e293b"/><text x="150" y="54" font-size="7" font-weight="bold" text-anchor="middle" fill="white">SCC</text>
+                        <circle cx="250" cy="50" r="25" fill="#2563eb"/><text x="250" y="54" font-size="7" font-weight="bold" text-anchor="middle" fill="white">AKI</text>
+                        <circle cx="350" cy="50" r="25" fill="#9333ea"/><text x="350" y="54" font-size="7" font-weight="bold" text-anchor="middle" fill="white">OUT</text>
+                    </svg>
                 </div>
 
                 <div class="bg-white p-8 rounded-[3rem] border border-slate-200 shadow-sm">
-                    <h3 class="font-black text-xl mb-6 flex items-center gap-3">🛒 List Belanja Mandiri</h3>
-                    <div id="shoppingList" class="grid gap-3">
-                        </div>
+                    <h3 class="font-black text-xl mb-6 flex items-center gap-3">🛒 List Perangkat</h3>
+                    <div id="shoppingList" class="grid gap-3 text-sm"></div>
                 </div>
             </div>
 
-            <div id="placeholder" class="h-64 border-4 border-dashed border-slate-200 rounded-[3rem] flex items-center justify-center opacity-40">
-                <p class="font-black text-slate-400 uppercase tracking-widest text-sm italic">Input data untuk melihat skema sistem</p>
+            <div id="placeholder" class="bg-white border-4 border-dashed border-slate-100 rounded-[3rem] p-20 text-center opacity-40">
+                <p class="font-black text-slate-400 uppercase tracking-widest text-sm italic">Masukkan konsumsi Wh harian Anda</p>
             </div>
         </div>
     </div>
 
     <script>
         function buildSystem() {
-            const watt = parseFloat(document.getElementById('wattInput').value);
-            const hour = parseFloat(document.getElementById('hourInput').value);
+            const rawWh = parseFloat(document.getElementById('whInput').value);
             const mode = document.getElementById('modeInput').value;
             const volt = parseFloat(document.getElementById('voltInput').value);
             const dod = parseFloat(document.getElementById('batteryType').value);
 
-            if (!watt || !hour) return alert("Mohon isi Watt dan Jam!");
+            if (!rawWh) return alert("Harap isi angka konsumsi harian!");
 
-            const loss = (mode === "AC") ? 1.15 : 1.05;
-            const wh = Math.ceil((watt * hour) * loss);
-            const wp = Math.ceil(wh / (3.5 * 0.8));
-            const ah = Math.ceil(wh / (volt * dod));
+            // 1. Loss Faktor & Total Wh (4 Jam Efektif & 0.85 Efisiensi)
+            const lossFactor = (mode === "AC") ? 1.15 : 1.05;
+            const totalWh = Math.ceil(rawWh * lossFactor);
+
+            // 2. Kebutuhan Panel (Berdasarkan permintaan: 4 jam matahari, 0.85 rugi-rugi)
+            const wp = Math.ceil(totalWh / (4 * 0.85));
+
+            // 3. Kapasitas Baterai
+            const ah = Math.ceil(totalWh / (volt * dod));
+
+            // 4. Rekomendasi Kabel & SCC
             const sccAmp = Math.ceil((wp / volt) * 1.25);
-            
-            // Kabel Calculation
             const standarKabel = [2.5, 4, 6, 10, 16, 25];
-            const rekomendasiKabel = standarKabel.find(s => s >= (sccAmp/3)) || 25;
+            const rekomendasiKabel = standarKabel.find(s => s >= (sccAmp/3.5)) || 25;
 
-            // UI Updates
-            document.getElementById('resWh').innerText = wh.toLocaleString('id-ID') + " Wh";
+            // 5. FITUR REKOMENDASI HEMAT (SMART LOGIC)
+            const recBox = document.getElementById('smartRec');
+            const recText = document.getElementById('recText');
+            recBox.classList.add('hidden');
+
+            if (rawWh >= 1000 && volt == 12) {
+                recBox.classList.remove('hidden');
+                recText.innerHTML = "Beban Anda besar (>1000Wh). <b>Gunakan sistem 24V atau 48V</b> untuk memperkecil ukuran kabel, menekan biaya komponen, dan meningkatkan efisiensi sistem.";
+            } else if (mode === "AC" && rawWh <= 300) {
+                recBox.classList.remove('hidden');
+                recText.innerHTML = "Konsumsi Anda rendah. Pertimbangkan menggunakan <b>Sistem Full DC</b> untuk menghindari 'boros energi' dari penggunaan Inverter.";
+            }
+
+            // Update UI
             document.getElementById('resWP').innerText = wp + " WP";
             document.getElementById('resAh').innerText = ah + " Ah";
-            document.getElementById('resSCC').innerText = sccAmp + " Ampere";
-            document.getElementById('resKabel').innerText = rekomendasiKabel + " mm²";
-            document.getElementById('outText').textContent = (mode === "AC") ? "INVERTER" : "LOAD DC";
+            document.getElementById('resKabel').innerText = `Saran Kabel: ${rekomendasiKabel} mm²`;
 
             // Shopping List
             const list = [
-                { t: "PV", n: `Panel Surya Min. ${wp} WP`, s: "Gunakan panel kualitas Grade A Mono/Poly" },
-                { t: "BAT", n: `Baterai Min. ${ah} Ah ${volt}V`, s: `Tipe ${dod === 0.5 ? 'GEL' : 'LiFePO4'}` },
-                { t: "SCC", n: `SCC MPPT ${sccAmp} Ampere`, s: "Sangat disarankan tipe MPPT untuk efisiensi" },
-                { t: "SAFE", n: `MCB DC ${sccAmp}A (2 Unit)`, s: "Wajib pasang di jalur Panel & Baterai" },
-                { t: "CABLE", n: `Kabel ${rekomendasiKabel}mm²`, s: "Kabel Tembaga Murni (PV1-F / NYAF)" }
+                { n: `Panel Surya Min. ${wp} WP`, s: "Gunakan tipe Monocrystalline untuk hasil maksimal." },
+                { n: `Baterai Min. ${ah} Ah ${volt}V`, s: `Tipe ${dod === 0.5 ? 'GEL' : 'LiFePO4'}` },
+                { n: `SCC MPPT ${sccAmp} Ampere`, s: "Sangat disarankan tipe MPPT untuk arus panel yang stabil." },
+                { n: `Kabel Tembaga ${rekomendasiKabel}mm²`, s: "Gunakan kabel khusus PV (Solar Cable) atau NYAF murni." },
+                { n: `MCB DC Breaker (${sccAmp}A)`, s: "Wajib pasang 2 unit (Jalur Panel & Jalur Baterai)." }
             ];
 
             if (mode === "AC") {
-                list.push({ t: "INV", n: `Inverter PSW ${Math.ceil(watt*1.5)}W`, s: "Wajib Pure Sine Wave (PSW)" });
+                list.push({ n: `Inverter Pure Sine Wave ${Math.ceil(rawWh/hourInput*1.5 || 500)}W`, s: "Wajib tipe Pure Sine Wave (PSW) agar elektronik awet." });
             }
 
             const listContainer = document.getElementById('shoppingList');
             listContainer.innerHTML = '';
             list.forEach(item => {
                 listContainer.innerHTML += `
-                    <div class="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                        <div class="bg-slate-900 text-white p-2 rounded-lg text-[10px] font-bold w-12 text-center">${item.t}</div>
+                    <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100 flex justify-between items-center">
                         <div>
-                            <p class="font-bold text-sm text-slate-800">${item.n}</p>
-                            <p class="text-[10px] text-slate-400 font-medium">${item.s}</p>
+                            <p class="font-bold text-slate-800">${item.n}</p>
+                            <p class="text-[10px] text-slate-400 uppercase font-bold tracking-widest">${item.s}</p>
                         </div>
+                        <span class="text-xs">✔️</span>
                     </div>
                 `;
             });
 
             document.getElementById('placeholder').classList.add('hidden');
             document.getElementById('resultArea').classList.remove('hidden');
-            window.scrollTo({ top: 100, behavior: 'smooth' });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     </script>
 </body>
